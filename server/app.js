@@ -11,28 +11,35 @@ const mongoSanitize = require("express-mongo-sanitize");
 const cookieParser = require("cookie-parser");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
+const authRoute = require("./routes/auth");
 
 app.use(express.json());
-app.use(cors());
-app.use(helmet());
-app.use(xss());
-app.use(cookieParser(process.env.JWT_SECRET));
 app.use(
-  rateLimit({
-    windowMs: 1000 * 60 * 15,
-    max: 50,
+  cors({
+    origin: "http://localhost:3000",
   })
 );
+//app.use(helmet());
+app.use(xss());
+app.use(cookieParser());
+// app.use(
+//   rateLimit({
+//     windowMs: 1000 * 60 * 15,
+//     max: 50,
+//   })
+// );
 app.use(mongoSanitize());
 
 app.get("/", (req, res) => {
   res.send("Welcome to the chat app");
 });
 
+app.use("/api/v1/auth", authRoute);
+
 app.use(errorHandler);
 app.use(notFound);
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 const start = async () => {
   try {

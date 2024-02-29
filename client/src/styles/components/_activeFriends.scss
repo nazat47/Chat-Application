@@ -1,0 +1,30 @@
+.active_friends {
+  .active_friend {
+    overflow: hidden;
+    .image_active_icon {
+      display: flex;
+      overflow-x: scroll;
+      &::-webkit-scrollbar{
+        overflow: hidden;
+      }
+      .image {
+        margin: 5px;
+        position: relative;
+        img {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+        }
+        .active_icon {
+          position: absolute;
+          bottom: 5px;
+          right: -3px;
+          background-color: rgb(4, 192, 4);
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+.chat {
+  width: 100%;
+  height: 100vh;
+  background-color: #141b2bf0;
+  .row {
+    height: 100%;
+    .col-3 {
+      .left_side {
+        padding: 5px 0px;
+        border-right: 1px solid #213156bf;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: start;
+        .top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin: 12px 8px;
+          .image_name {
+            display: flex;
+            cursor: pointer;
+            .image_contain {
+              height: 40px;
+              width: 40px;
+              border-radius: 50%;
+              overflow: hidden;
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+            .name {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              h3 {
+                padding-left: 10px;
+                font-weight: 600;
+                color: white;
+              }
+            }
+          }
+          .icons {
+            display: flex;
+            .icon {
+              padding: 8px;
+              background-color: #0a0a1357;
+              margin-left: 8px;
+              border-radius: 50%;
+              color: white;
+              cursor: pointer;
+            }
+          }
+        }
+        .friend_search {
+          padding: 0px 8px;
+          .search {
+            display: flex;
+            width: 100%;
+            height: 40px;
+            background-color: #15162559;
+            border-radius: 50px;
+            margin: 20px 0px;
+            button {
+              padding: 12px;
+              border-bottom-left-radius: 50px;
+              border-top-left-radius: 50px;
+              border: none;
+              color: white;
+              font-size: 20px;
+              background-color: transparent;
+            }
+            .form_control {
+              width: 100%;
+              padding-left: 0px;
+              border-bottom-right-radius: 50px;
+              border-top-right-radius: 50px;
+              background-color: #fff0;
+              color: rgb(224, 224, 224);
+              border: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}

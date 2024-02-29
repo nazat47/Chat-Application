@@ -1,0 +1,67 @@
+.register,
+.login {
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(231, 247, 240);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .card {
+    .card_header {
+      h3 {
+        text-align: center;
+        color: white;
+        font-weight: 800;
+        font-size: x-large;
+      }
+    }
+    .card_body {
+      .form_group {
+        &:last-child{
+          margin-bottom: 0px;
+        }
+        span {
+          text-align: center;
+          a {
+            color: white;
+            text-decoration: underline;
+          }
+        }
+        .file_image {
+          display: flex;
+          .file {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            label {
+              cursor: pointer;
+              color: rgb(40, 96, 77);
+              padding: 8px;
+              width: 120px;
+              text-align: center;
+              border-radius: 50px;
+              background-color: rgb(217, 237, 229);
+              margin-left: 10px;
+            }
+            .form_control {
+              display: none;
+            }
+          }
+          .image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid white;
+            overflow: hidden;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+        }
+      }
+    }
+  }
+}
