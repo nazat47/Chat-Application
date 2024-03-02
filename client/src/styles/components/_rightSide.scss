@@ -4,6 +4,7 @@
     .row {
       height: 100%;
       .col-8 {
+        transition: all 0.4s ease-in-out;
         .message_send_show {
           height: 100vh;
           border-right: 1px solid #213156bf;
@@ -59,6 +60,11 @@
                 color: white;
                 cursor: pointer;
                 background-color: #0a0a1357;
+                label {
+                  display: flex;
+                  margin-bottom: 0px;
+                  cursor: pointer;
+                }
               }
             }
           }
@@ -66,6 +72,21 @@
       }
       .col-4 {
       }
+    }
+    #dot {
+      display: none;
+    }
+    #dot:checked ~ .row .col-4 {
+      display: none;
+    }
+    #dot:checked ~ .row .col-8 {
+      width: 100%;
+    }
+    #dot:checked ~ .row .col-8 .message_show .my_message .my_text {
+      width: 800px;
+    }
+    #dot:checked ~ .row .col-8 .message_show .fd_message .fd_text {
+      width: 700px;
     }
   }
 }

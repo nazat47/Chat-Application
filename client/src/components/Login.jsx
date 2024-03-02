@@ -43,7 +43,7 @@ const Login = () => {
       const { data } = await axios.post(
         `${base_url}/auth/login`,
         formData,
-        config
+        {config,withCredentials:true}
       );
       if (data?.msg) {
         alert.error(data?.msg);

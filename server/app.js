@@ -12,14 +12,16 @@ const cookieParser = require("cookie-parser");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 const authRoute = require("./routes/auth");
+const chatRoute = require("./routes/chat");
 
 app.use(express.json());
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials:true,
   })
 );
-//app.use(helmet());
+app.use(helmet());
 app.use(xss());
 app.use(cookieParser());
 // app.use(
@@ -35,6 +37,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/chat", chatRoute);
 
 app.use(errorHandler);
 app.use(notFound);

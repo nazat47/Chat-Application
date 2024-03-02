@@ -1,0 +1,107 @@
+.message_send_section {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  .file {
+    display: flex;
+    padding: 8px;
+    cursor: pointer;
+    color: white;
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0px;
+      cursor: pointer;
+    }
+    #pic {
+      display: none;
+    }
+    .add_image,
+    .add_attachment,
+    .add_gift {
+      position: fixed;
+      padding: 4px;
+      background-color: #121727;
+      font-size: 14px;
+      bottom: 40px;
+      display: none;
+    }
+  }
+  .hover_attachment {
+    position: relative;
+    &:hover {
+      .add_attachment {
+        display: block;
+      }
+    }
+  }
+  .hover_image {
+    position: relative;
+    &:hover {
+      .add_image {
+        display: block;
+      }
+    }
+  }
+  .hover_gift {
+    position: relative;
+    &:hover {
+      .add_gift {
+        display: block;
+      }
+    }
+  }
+  .message_type {
+    display: flex;
+    width: 70%;
+    height: 40px;
+    background-color: #15162559;
+    border-radius: 50px;
+    border: none;
+    align-items: center;
+    .form_control {
+      width: 100%;
+      border-bottom-left-radius: 50px;
+      border-top-left-radius: 50px;
+      background-color: transparent;
+      border: none;
+      color: white;
+      font-weight:500;
+    }
+    label {
+      font-size: 20px;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+  }
+  .emoji_section {
+    width: 250px;
+    background-color: rgb(237, 243, 248);
+    position: absolute;
+    right: 60px;
+    bottom: 50px;
+    padding: 6px;
+    border-radius: 8px;
+    border-bottom-right-radius: 0px;
+    display: none;
+    transition: all 0.3s ease-in-out;
+    .emoji {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-gap: 4px;
+      span {
+        cursor: pointer;
+        font-size: x-large;
+      }
+    }
+  }
+  #emoji {
+    display: none;
+  }
+  #emoji:checked ~ .emoji_section {
+    display: block;
+    transition: all 0.3s ease-in-out;
+  }
+}

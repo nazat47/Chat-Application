@@ -3,7 +3,7 @@
   padding: 10px;
   overflow-y: auto;
   &::-webkit-scrollbar {
-    overflow: hidden;
+    display: none;
   }
   .my_message {
     float: right;
@@ -11,11 +11,19 @@
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
-      width: 370px;
+      width: 500px;
       .message_text {
         text-align: end;
         padding: 10px;
         border-radius: 10px;
+        img {
+          width: 220px;
+          height: 270px;
+          margin-right: 0px;
+          border-radius: 5px;
+          overflow: hidden;
+          object-fit: cover;
+        }
       }
     }
     .time {
@@ -31,11 +39,19 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      width: 370px;
+      width: 500px;
       .message_text {
         text-align: start;
         border-radius: 10px;
         padding: 10px;
+        img {
+          width: 220px;
+          height: 270px;
+          margin-right: 0px;
+          border-radius: 5px;
+          overflow: hidden;
+          object-fit: cover;
+        }
       }
     }
   }

@@ -2,7 +2,7 @@ const { Unthenticated, Unauthorized } = require("../errors");
 const { validateToken } = require("../utils");
 
 const authenticateUser = (req, res, next) => {
-  const token = req.signedCookies.token;
+  const token = req.Cookies.token;
   if (!token) {
     throw new Unthenticated("Not allowed to access the route");
   }
