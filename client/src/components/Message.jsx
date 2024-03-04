@@ -1,34 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-const Message = ({ messages, currentFriend, scrollRef }) => {
+const Message = ({ messages, currentFriend, scrollRef, typing }) => {
   const { currentUser } = useSelector((state) => state.user);
-
   return (
-    <div className="message_show">
-      {messages?.length > 0
-        ? messages.map((msg, i) =>
-            msg.senderId === currentUser?._id ? (
-              <div ref={scrollRef} className="my_message" key={i}>
-                <div className="image_message">
-                  <div className="my_text">
-                    <p className="message_text">
-                      {msg.message?.text === "" ? (
-                        <img src={msg.message?.image} alt="pic" />
-                      ) : (
-                        msg.message?.text
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <div className="time">{msg.createdAt.slice(0, 10)}</div>
-              </div>
-            ) : (
-              <div ref={scrollRef} className="fd_message" key={i}>
-                <div className="image_message_time">
-                  <img src={currentFriend?.image} alt="" />
-                  <div className="message_time">
-                    <div className="fd_text">
+    <>
+      <div className="message_show">
+        {messages?.length > 0
+          ? messages.map((msg, i) =>
+              msg.senderId === currentUser?._id ? (
+                <div ref={scrollRef} className="my_message" key={i}>
+                  <div className="image_message">
+                    <div className="my_text">
                       <p className="message_text">
                         {msg.message?.text === "" ? (
                           <img src={msg.message?.image} alt="pic" />
@@ -37,14 +20,46 @@ const Message = ({ messages, currentFriend, scrollRef }) => {
                         )}
                       </p>
                     </div>
-                    <div className="time">{msg.createdAt.slice(0, 10)}</div>
+                  </div>
+                  <div className="time">{msg.createdAt?.slice(0, 10)}</div>
+                </div>
+              ) : (
+                <div ref={scrollRef} className="fd_message" key={i}>
+                  <div className="image_message_time">
+                    <img src={currentFriend?.image} alt="" />
+                    <div className="message_time">
+                      <div className="fd_text">
+                        <p className="message_text">
+                          {msg.message?.text === "" ? (
+                            <img src={msg.message?.image} alt="pic" />
+                          ) : (
+                            msg.message?.text
+                          )}
+                        </p>
+                      </div>
+                      <div className="time">{msg.createdAt?.slice(0, 10)}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )
             )
-          )
-        : ""}
-    </div>
+          : ""}
+      </div>
+      {typing?.msg?.length > 0 && typing?.senderId === currentFriend._id && (
+        <div className="typing_message">
+          <div className="fd_message">
+            <div className="image_message_time">
+              <img src={currentFriend?.image} alt="" />
+              <div className="message_time">
+                <div className="fd_text">
+                  <p className="message_text">Typing...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

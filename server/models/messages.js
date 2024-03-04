@@ -25,6 +25,10 @@ const messageSchema = new mongoose.Schema(
         default: "",
       },
     },
+    status: {
+      type: String,
+      default: "unseen",
+    },
   },
   { timestamps: true }
 );

@@ -4,7 +4,10 @@ import { BsThreeDots } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { BiSearch } from "react-icons/bi";
 import axios from "axios";
+import socketIO from "socket.io-client";
+import toast, { Toaster } from "react-hot-toast";
 import { app } from "../firebase";
+import useSound from "use-sound";
 import {
   getDownloadURL,
   getStorage,
@@ -12,39 +15,144 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import {
+  deliverMessageUpdate,
   getFriendsFailure,
   getFriendsStart,
   getFriendsSuccess,
   getMessagesFailure,
   getMessagesStart,
   getMessagesSuccess,
+  seenMessageUpdate,
   sendMessagesFailure,
   sendMessagesStart,
   sendMessagesSuccess,
+  sentSuccessClear,
+  updateFriendMessage,
+  updateFriendMessageStatus,
 } from "../store/reducers/chatReducer";
 import ActiveFriends from "./ActiveFriends";
 import Friends from "./Friends";
 import RightSide from "./RightSide";
+import notificationSound from "../audio/Slide.mp3";
+import sendingSound from "../audio/Milestone.mp3";
+
+const ENDPOINT = "http://localhost:4001/";
+const socket = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const Chat = () => {
   const base_url = process.env.REACT_APP_BASE_URL;
-  const { friends, messages } = useSelector((state) => state.chat);
+  const { friends, messages, sentSuccess } = useSelector((state) => state.chat);
   const { currentUser } = useSelector((state) => state.user);
   const [currentFriend, setCurrentFriend] = useState("");
   const [newMessage, setNewMessage] = useState("");
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState("");
+  const [typing, setTyping] = useState("");
+  const [notifySound] = useSound(notificationSound);
+  const [sendSound] = useSound(sendingSound);
   const dispatch = useDispatch();
   const scrollRef = useRef();
+  useEffect(() => {
+    socket.emit("addUser", currentUser._id, currentUser);
+  }, []);
+  useEffect(() => {
+    socket.on("getUsers", (users) => {
+      const filterUsers = users.filter((u) => u.userId !== currentUser._id);
+      setActiveUsers(filterUsers);
+    });
+  }, []);
+  useEffect(() => {
+    socket.on("getMessage", (data) => {
+      setArrivalMessage(data);
+    });
+    socket.on("getTypingMessage", (data) => {
+      setTyping(data);
+    });
+    socket.on("getMessageSeen", (msg) => {
+      dispatch(seenMessageUpdate(msg));
+    });
+    socket.on("getMessageDeliver", (msg) => {
+      dispatch(deliverMessageUpdate(msg));
+    });
+  }, []);
+  useEffect(() => {
+    if (sentSuccess) {
+      socket.emit("sendMessage", messages[messages.length - 1]);
+      dispatch(updateFriendMessage(messages[messages.length - 1]));
+      dispatch(sentSuccessClear());
+    }
+  }, [sentSuccess]);
+  useEffect(() => {
+    const updateSeenMessage = async (arrivalMessage) => {
+      try {
+        const { data } = await axios.patch(
+          `${base_url}/chat/seen-message`,
+          arrivalMessage
+        );
+      } catch (error) {
+        console.log(error.response.data?.msg);
+      }
+    };
+    if (arrivalMessage && currentFriend) {
+      if (
+        arrivalMessage?.senderId === currentFriend?._id &&
+        arrivalMessage?.receiverId === currentUser?._id
+      ) {
+        dispatch(sendMessagesSuccess(arrivalMessage));
+        updateSeenMessage(arrivalMessage);
+        socket.emit("messageSeen", arrivalMessage);
+        dispatch(
+          updateFriendMessageStatus({ msg: arrivalMessage, status: "seen" })
+        );
+      }
+    }
+    setArrivalMessage("");
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    const updateDeliverMessage = async (arrivalMessage) => {
+      try {
+        const { data } = await axios.patch(
+          `${base_url}/chat/deliver-message`,
+          arrivalMessage
+        );
+      } catch (error) {
+        console.log(error.response.data?.msg);
+      }
+    };
+    if (
+      arrivalMessage?.senderId !== currentFriend?._id &&
+      arrivalMessage?.receiverId === currentUser?._id
+    ) {
+      sendSound();
+      updateDeliverMessage(arrivalMessage);
+      socket.emit("messageDeliver", arrivalMessage);
+      toast.success(`${arrivalMessage.senderName} has sent a message`);
+      dispatch(
+        updateFriendMessageStatus({ msg: arrivalMessage, status: "delivered" })
+      );
+    }
+    setArrivalMessage("");
+  }, [arrivalMessage]);
+
   const handleInput = (e) => {
     setNewMessage(e.target.value);
+    socket.emit("typingMessage", {
+      senderId: currentUser._id,
+      receiverId: currentFriend._id,
+      msg: e.target.value,
+    });
   };
   const sendMessage = async (e) => {
     e.preventDefault();
+    notifySound();
     const messageData = {
       senderId: currentUser._id,
       senderName: currentUser.username,
       receiverId: currentFriend._id,
       text: newMessage ? newMessage : "❤️",
     };
+
     try {
       sendMessagesStart();
       const { data } = await axios.post(
@@ -55,7 +163,13 @@ const Chat = () => {
         dispatch(sendMessagesFailure(data?.msg));
       } else {
         dispatch(sendMessagesSuccess(data));
-        setNewMessage("")
+        // socket.emit("sendMessage", data);
+        setNewMessage("");
+        socket.emit("typingMessage", {
+          senderId: currentUser._id,
+          receiverId: currentFriend._id,
+          msg: "",
+        });
       }
     } catch (error) {
       dispatch(sendMessagesFailure(error.response.data?.msg));
@@ -64,6 +178,11 @@ const Chat = () => {
   };
   const sendEmoji = (emo) => {
     setNewMessage(`${newMessage}` + emo);
+    socket.emit("typingMessage", {
+      senderId: currentUser._id,
+      receiverId: currentFriend._id,
+      msg: emo,
+    });
   };
   const sendImage = async (e) => {
     if (e.target.files.length !== 0) {
@@ -72,13 +191,25 @@ const Chat = () => {
       promise
         .then(async (url) => {
           console.log("Image uploaded successfully");
+          socket.emit("sendMessage", {
+            senderId: currentUser._id,
+            senderName: currentUser.username,
+            receiverId: currentFriend._id,
+            time: new Date(),
+            message: {
+              text: "",
+              image: url,
+            },
+          });
           const messageData = {
             senderId: currentUser?._id,
             senderName: currentUser?.username,
             receiverId: currentFriend?._id,
             image: url || "",
           };
+
           try {
+            notifySound();
             sendMessagesStart();
             const { data } = await axios.post(
               `${base_url}/chat/send-image-message`,
@@ -138,14 +269,14 @@ const Chat = () => {
         }
       } catch (error) {
         dispatch(getFriendsFailure(error.response?.data?.msg));
-        console.log(error.message);
+        console.log(error);
       }
     };
     getfrinds();
   }, []);
   useEffect(() => {
     if (friends?.length > 0) {
-      setCurrentFriend(friends[0]);
+      setCurrentFriend(friends[0].frndInfo);
     }
   }, []);
 
@@ -174,6 +305,15 @@ const Chat = () => {
   }, [messages]);
   return (
     <div className="chat">
+      <Toaster
+        position={"top-right"}
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            fontSize: "18px",
+          },
+        }}
+      />
       <div className="row">
         <div className="col-3">
           <div className="left_side">
@@ -208,21 +348,27 @@ const Chat = () => {
               </div>
             </div>
             <div className="active_friends">
-              <ActiveFriends />
+              {activeUsers?.map((active, i) => (
+                <ActiveFriends
+                  setCurrentFriend={setCurrentFriend}
+                  activeUsers={active}
+                  key={i}
+                />
+              ))}
             </div>
             <div className="friends">
               {friends?.length > 0
                 ? friends.map((frd, i) => (
                     <div
-                      onClick={() => setCurrentFriend(frd)}
+                      onClick={() => setCurrentFriend(frd.frndInfo)}
                       className={`${
-                        currentFriend._id === frd._id
+                        currentFriend?._id === frd.frndInfo?._id
                           ? "hover_friend  active"
                           : "hover_friend"
                       }`}
                       key={i}
                     >
-                      <Friends friend={frd} />
+                      <Friends friend={frd} userId={currentUser?._id} />
                     </div>
                   ))
                 : "No friends"}
@@ -240,6 +386,8 @@ const Chat = () => {
             scrollRef={scrollRef}
             sendEmoji={sendEmoji}
             sendImage={sendImage}
+            activeUsers={activeUsers}
+            typing={typing}
           />
         ) : (
           "No conversation selected"

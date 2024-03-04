@@ -15,7 +15,9 @@ const RightSide = ({
   messages,
   scrollRef,
   sendEmoji,
-  sendImage
+  sendImage,
+  activeUsers,
+  typing
 }) => {
   return (
     <div className="col-9">
@@ -28,7 +30,10 @@ const RightSide = ({
                 <div className="image_name">
                   <div className="image">
                     <img src={currentFriend.image} alt="" />
-                    <div className="active_icon"></div>
+                    {activeUsers?.length > 0 &&
+                      activeUsers.some(
+                        (u) => u.userId === currentFriend._id
+                      ) && <div className="active_icon"></div>}
                   </div>
                   <div className="name">
                     <h3>{currentFriend.username}</h3>
@@ -36,14 +41,14 @@ const RightSide = ({
                 </div>
                 <div className="icons">
                   <div className="icon">
-                    <IoCall size={25} />
+                    <IoCall size={20} />
                   </div>
                   <div className="icon">
-                    <BsCameraVideoFill size={25} />
+                    <BsCameraVideoFill size={20} />
                   </div>
                   <div className="icon">
                     <label htmlFor="dot">
-                      <HiDotsCircleHorizontal size={25} />
+                      <HiDotsCircleHorizontal size={20} />
                     </label>
                   </div>
                 </div>
@@ -52,6 +57,7 @@ const RightSide = ({
                 messages={messages}
                 currentFriend={currentFriend}
                 scrollRef={scrollRef}
+                typing={typing}
               />
               <MessageSend
                 handleInput={handleInput}
@@ -64,7 +70,10 @@ const RightSide = ({
             </div>
           </div>
           <div className="col-4">
-            <FriendInfo currentFriend={currentFriend} />
+            <FriendInfo
+              currentFriend={currentFriend}
+              activeUsers={activeUsers}
+            />
           </div>
         </div>
       </div>

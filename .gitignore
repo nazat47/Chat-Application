@@ -3,8 +3,10 @@
 # dependencies
 client/node_modules
 server/node_modules
+socket/node_modules
 server/.env
 client/.env
+socket/.env
 /.pnp
 .pnp.js
 

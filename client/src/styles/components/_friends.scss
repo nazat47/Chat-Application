@@ -3,28 +3,29 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     overflow: hidden;
   }
-  .hover_friend.active{
+  .hover_friend.active {
     background-color: rgba(85, 92, 160, 0.116);
   }
   .hover_friend {
     cursor: pointer;
-    &:hover{
-        background-color: rgba(85, 92, 160, 0.116);
+    &:hover {
+      background-color: rgba(85, 92, 160, 0.116);
     }
     .friend {
       display: flex;
       width: 100%;
       padding: 7px 15px;
-      gap:10px;
+      gap: 10px;
       .friend_image {
         .image {
           width: 45px;
           height: 45px;
           overflow: hidden;
           border-radius: 50%;
+          margin-right: 8px;
           img {
             width: 100%;
             height: 100%;
@@ -32,14 +33,50 @@
           }
         }
       }
-      .friend_name {
+      .friend_name_seen {
+        width: 100%;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        h4{
+        .friend_name {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          h4 {
             color: rgb(223, 223, 223);
-            font-weight: 600;
+            font-weight: 400;
+          }
+          .msg_time {
+            .time_ago{
+              color:rgb(106, 181, 203);
+            }
+            span {
+              font-size: 12px;
+              color: rgb(198, 208, 215);
+              margin-inline:2px;
+            }
+          }
         }
-
+        .seen_unseen_icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          img {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+          }
+          .unseen,.delivered{
+            color:rgb(226, 236, 239);
+          }
+          .seen_icon{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgb(102, 173, 227);
+          }
+        }
       }
     }
   }

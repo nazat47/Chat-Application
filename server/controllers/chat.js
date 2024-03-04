@@ -4,11 +4,26 @@ const User = require("../models/user");
 
 const getFriends = async (req, res) => {
   const { id } = req.params;
+  let frndMsgs = [];
   const friends = await User.find({ _id: { $ne: id } });
   if (!friends) {
     throw new BadRequest("No users found");
   }
-  return res.status(200).json(friends);
+  for (const frnd of friends) {
+    let lastMsg = await getLastMessage(id, frnd._id);
+    frndMsgs = [...frndMsgs, { frndInfo: frnd, lMsg: lastMsg }];
+  }
+  return res.status(200).json(frndMsgs);
+};
+
+const getLastMessage = async (userId, friendId) => {
+  const lastMessage = await Messages.findOne({
+    $or: [
+      { senderId: userId, receiverId: friendId },
+      { senderId: friendId, receiverId: userId },
+    ],
+  }).sort({ updatedAt: -1 });
+  return lastMessage;
 };
 
 const sendMessage = async (req, res) => {
@@ -58,4 +73,37 @@ const getMessages = async (req, res) => {
   return res.status(200).json(getAllMessages);
 };
 
-module.exports = { getFriends, sendMessage, getMessages, sendImageMessage };
+const messsageSeen = async (req, res) => {
+  const { _id } = req.body;
+  const updateSeen = await Messages.findByIdAndUpdate(
+    _id,
+    { status: "seen" },
+    { new: true }
+  );
+  if (!updateSeen) {
+    throw new BadRequest("Unable to update message");
+  }
+  console.log(updateSeen);
+  return res.status(200).json(updateSeen);
+};
+const messsageDeliver = async (req, res) => {
+  const { _id } = req.body;
+  const updateDeliver = await Messages.findByIdAndUpdate(
+    _id,
+    { status: "delivered" },
+    { new: true }
+  );
+  if (!updateDeliver) {
+    throw new BadRequest("Unable to update message");
+  }
+  return res.status(200).json(updateDeliver);
+};
+
+module.exports = {
+  messsageDeliver,
+  messsageSeen,
+  getFriends,
+  sendMessage,
+  getMessages,
+  sendImageMessage,
+};
