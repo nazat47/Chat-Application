@@ -5,6 +5,25 @@
   &::-webkit-scrollbar {
     display: none;
   }
+  .friend_connect {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    color: white;
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+    }
+    h3 {
+      margin-top: 10px;
+    }
+    .time_ago {
+      color: rgb(170, 194, 198);
+    }
+  }
   .my_message {
     float: right;
     .my_text {
@@ -12,6 +31,14 @@
       align-items: flex-end;
       justify-content: flex-end;
       width: 500px;
+      .img,
+      span {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin-left: 5px;
+        color: white;
+      }
       .message_text {
         text-align: end;
         padding: 10px;
@@ -79,6 +106,6 @@
     font-size: small;
   }
 }
-.typing_message{
+.typing_message {
   padding: 10px 5px;
 }

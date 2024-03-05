@@ -53,7 +53,13 @@ io.on("connection", (socket) => {
       socket.to(user.socketId).emit("getMessageDeliver", msg);
     }
   });
-  
+  socket.on("seen", (data) => {
+    const user = findFriend(data.senderId);
+    if (user !== undefined) {
+      socket.to(user.socketId).emit("seenSuccess", data);
+    }
+  });
+
   socket.on("typingMessage", (data) => {
     const receiver = findFriend(data.receiverId);
     if (receiver !== undefined) {
@@ -62,6 +68,12 @@ io.on("connection", (socket) => {
         receiverId: data.receiverId,
         msg: data.msg,
       });
+    }
+  });
+  socket.on("logout", (userId) => {
+    const user = findFriend(userId);
+    if (user !== undefined) {
+      removeUser(user.socketId);
     }
   });
   socket.on("disconnect", () => {

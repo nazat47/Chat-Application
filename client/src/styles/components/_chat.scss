@@ -44,6 +44,41 @@
           }
           .icons {
             display: flex;
+            position: relative;
+            .theme_logout.show {
+              transform: scale(1);
+              transition: all 0.2s ease-in-out;
+              z-index: 10;
+            }
+            .theme_logout {
+              width: 200px;
+              padding: 10px;
+              border-radius: 8px;
+              background-color: rgb(18, 26, 46);
+              transform: scale(0);
+              transition: all 0.2s ease-in-out;
+              position: absolute;
+              z-index: 10;
+              color: rgb(228, 227, 227);
+              .on,
+              .off {
+                display: flex;
+                justify-content: start;
+                align-items: start;
+                margin-top: 10px;
+                gap:0.5rem;
+                label {
+                  color: rgb(219, 219, 219);
+                  cursor: pointer;
+                }
+              }
+              .logout{
+                display: flex;
+                align-items: center;
+                margin-top: 10px;
+                cursor: pointer;
+              }
+            }
             .icon {
               padding: 6px;
               background-color: #0a0a1357;

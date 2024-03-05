@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { BsThreeDots } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { BiSearch } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import socketIO from "socket.io-client";
 import toast, { Toaster } from "react-hot-toast";
@@ -22,11 +23,13 @@ import {
   getMessagesFailure,
   getMessagesStart,
   getMessagesSuccess,
+  getSuccessClear,
   seenMessageUpdate,
   sendMessagesFailure,
   sendMessagesStart,
   sendMessagesSuccess,
   sentSuccessClear,
+  updateFriend,
   updateFriendMessage,
   updateFriendMessageStatus,
 } from "../store/reducers/chatReducer";
@@ -35,23 +38,30 @@ import Friends from "./Friends";
 import RightSide from "./RightSide";
 import notificationSound from "../audio/Slide.mp3";
 import sendingSound from "../audio/Milestone.mp3";
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { signOutSuccess } from "../store/reducers/userReducer";
 
 const ENDPOINT = "http://localhost:4001/";
 const socket = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const Chat = () => {
   const base_url = process.env.REACT_APP_BASE_URL;
-  const { friends, messages, sentSuccess } = useSelector((state) => state.chat);
+  const { friends, messages, sentSuccess, getSuccess } = useSelector(
+    (state) => state.chat
+  );
   const { currentUser } = useSelector((state) => state.user);
   const [currentFriend, setCurrentFriend] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const [activeUsers, setActiveUsers] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState("");
   const [typing, setTyping] = useState("");
+  const [hide, setHide] = useState(true);
   const [notifySound] = useSound(notificationSound);
   const [sendSound] = useSound(sendingSound);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const scrollRef = useRef();
+  const toggleRef = useRef();
   useEffect(() => {
     socket.emit("addUser", currentUser._id, currentUser);
   }, []);
@@ -73,6 +83,9 @@ const Chat = () => {
     });
     socket.on("getMessageDeliver", (msg) => {
       dispatch(deliverMessageUpdate(msg));
+    });
+    socket.on("seenSuccess", (data) => {
+      dispatch(seenMessageUpdate(data));
     });
   }, []);
   useEffect(() => {
@@ -101,9 +114,8 @@ const Chat = () => {
         dispatch(sendMessagesSuccess(arrivalMessage));
         updateSeenMessage(arrivalMessage);
         socket.emit("messageSeen", arrivalMessage);
-        dispatch(
-          updateFriendMessageStatus({ msg: arrivalMessage, status: "seen" })
-        );
+        dispatch(updateFriendMessageStatus({ msg: arrivalMessage }));
+        dispatch(seenMessageUpdate(arrivalMessage));
       }
     }
     setArrivalMessage("");
@@ -128,9 +140,8 @@ const Chat = () => {
       updateDeliverMessage(arrivalMessage);
       socket.emit("messageDeliver", arrivalMessage);
       toast.success(`${arrivalMessage.senderName} has sent a message`);
-      dispatch(
-        updateFriendMessageStatus({ msg: arrivalMessage, status: "delivered" })
-      );
+      dispatch(updateFriendMessageStatus({ msg: arrivalMessage }));
+      dispatch(deliverMessageUpdate(arrivalMessage));
     }
     setArrivalMessage("");
   }, [arrivalMessage]);
@@ -300,9 +311,67 @@ const Chat = () => {
     };
     getMessages();
   }, [currentFriend?._id]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      if (
+        messages[messages.length - 1].senderId !== currentUser._id &&
+        messages[messages.length - 1].status !== "seen"
+      ) {
+        try {
+          dispatch(updateFriend(currentFriend._id));
+          socket.emit("seen", {
+            senderId: currentFriend._id,
+            receiverId: currentUser._id,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+
+        const seenMessage = async () => {
+          try {
+            const { data } = await axios.patch(
+              `${base_url}/chat/seen-message`,
+              {
+                _id: messages[messages.length - 1]._id,
+              }
+            );
+          } catch (error) {
+            console.log(error.response.data?.msg);
+          }
+        };
+        seenMessage();
+      }
+    }
+    dispatch(getSuccessClear());
+  }, [getSuccess]);
+
   useEffect(() => {
     scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  useEffect(() => {
+    const handleHide = (e) => {
+      if (toggleRef.current && !toggleRef.current.contains(e.target)) {
+        setHide(true);
+      }
+    };
+    window.addEventListener("click", handleHide);
+    return () => {
+      window.removeEventListener("click", handleHide);
+    };
+  }, []);
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.get(`${base_url}/auth/logout`, {
+        withCredentials: true,
+      });
+      dispatch(signOutSuccess());
+      socket.emit("logout", currentUser._id);
+      navigate("/login");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <div className="chat">
       <Toaster
@@ -327,11 +396,31 @@ const Chat = () => {
                 </div>
               </div>
               <div className="icons">
-                <div className="icon">
+                <div
+                  onClick={(e) => e.stopPropagation() || setHide(false)}
+                  className="icon"
+                >
                   <BsThreeDots />
                 </div>
                 <div className="icon">
                   <FaEdit />
+                </div>
+                <div
+                  ref={toggleRef}
+                  className={hide ? "theme_logout" : "theme_logout show"}
+                >
+                  <h3>Dark Mode</h3>
+                  <div className="on">
+                    <input value="dark" type="radio" name="theme" id="dark" />
+                    <label htmlFor="dark">On</label>
+                  </div>
+                  <div className="off">
+                    <input value="light" type="radio" name="theme" id="light" />
+                    <label htmlFor="light">Off</label>
+                  </div>
+                  <div onClick={handleLogout} className="logout">
+                    <RiLogoutBoxLine /> Logout
+                  </div>
                 </div>
               </div>
             </div>
@@ -368,7 +457,11 @@ const Chat = () => {
                       }`}
                       key={i}
                     >
-                      <Friends friend={frd} userId={currentUser?._id} />
+                      <Friends
+                        activeUsers={activeUsers}
+                        friend={frd}
+                        userId={currentUser?._id}
+                      />
                     </div>
                   ))
                 : "No friends"}

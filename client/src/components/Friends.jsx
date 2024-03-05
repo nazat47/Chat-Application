@@ -1,33 +1,63 @@
 import React from "react";
 import moment from "moment";
 import { HiOutlineCheckCircle } from "react-icons/hi";
-import {
-  RiCheckboxBlankCircleFill,
-  RiCheckboxCircleFill,
-} from "react-icons/ri";
+import { RiCheckboxCircleFill } from "react-icons/ri";
 
-const Friends = ({ friend, userId }) => {
+const Friends = ({ friend, userId, activeUsers }) => {
   const { frndInfo, lMsg } = friend;
+  const active = activeUsers?.some((active) => active.userId === frndInfo._id);
   return (
     <div className="friend">
       <div className="friend_image">
         <div className="image">
           <img src={frndInfo?.image} alt="" />
+          {active && <div className="active_icon"></div>}
         </div>
       </div>
       <div className="friend_name_seen">
         <div className="friend_name">
-          <h4>{frndInfo?.username}</h4>
+          <h4
+            className={
+              lMsg?.senderId !== userId &&
+              lMsg?.status !== undefined &&
+              lMsg?.status !== "seen"
+                ? "unseen_message"
+                : ""
+            }
+          >
+            {frndInfo?.username}
+          </h4>
           <div className="msg_time">
             {lMsg && lMsg?.senderId === userId ? (
               <span>You: </span>
             ) : lMsg?.senderId === frndInfo?._id ? (
-              <span>{frndInfo?.username}: </span>
+              <span
+                className={
+                  lMsg?.senderId !== userId &&
+                  lMsg?.status !== undefined &&
+                  lMsg?.status !== "seen"
+                    ? "unseen_message"
+                    : ""
+                }
+              >
+                {frndInfo?.username}:{" "}
+              </span>
             ) : (
               ""
             )}
             {lMsg?.message?.text ? (
-              <span> {lMsg?.message?.text?.slice(0, 10)}</span>
+              <span
+                className={
+                  lMsg?.senderId !== userId &&
+                  lMsg?.status !== undefined &&
+                  lMsg?.status !== "seen"
+                    ? "unseen_message"
+                    : ""
+                }
+              >
+                {" "}
+                {lMsg?.message?.text?.slice(0, 10)}
+              </span>
             ) : lMsg?.message?.image ? (
               <span>Sent an image</span>
             ) : (

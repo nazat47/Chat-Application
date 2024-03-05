@@ -56,5 +56,8 @@ const userLogin = async (req, res) => {
   const { password: pass, ...rest } = user._doc;
   return res.status(200).json(rest);
 };
+const userLogout = async (req, res) => {
+  return res.status(200).clearCookie("token").json({ success: "true" });
+};
 
-module.exports = { userRegister, userLogin };
+module.exports = { userRegister, userLogin, userLogout };

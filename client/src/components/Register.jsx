@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -21,7 +21,7 @@ const Register = () => {
   const alert = useAlert();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -29,6 +29,11 @@ const Register = () => {
     confirmPassword: "",
     image: "",
   });
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, []);
   const handleInput = (e) => {
     setFormData({
       ...formData,
@@ -54,12 +59,12 @@ const Register = () => {
         dispatch(signUpFailure(data?.msg));
       } else {
         dispatch(signUpSuccess(data?.token));
-        alert.success("Sign up sucessfull")
+        alert.success("Sign up sucessfull");
         navigate("/login");
       }
     } catch (error) {
       dispatch(signUpFailure(error.response.data?.msg));
-      alert.error(error.response.data?.msg)
+      alert.error(error.response.data?.msg);
       console.log(error.message);
     }
   };

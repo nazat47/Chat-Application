@@ -6,6 +6,7 @@ const initialState = {
   messages: [],
   error: null,
   sentSuccess: false,
+  getSuccess: false,
 };
 
 const chatSlice = createSlice({
@@ -39,11 +40,11 @@ const chatSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-
     getMessagesSuccess: (state, action) => {
       state.loading = false;
       state.messages = action.payload;
       state.error = null;
+      state.getSuccess = true;
     },
     sendMessagesSuccess: (state, action) => {
       state.loading = false;
@@ -67,10 +68,8 @@ const chatSlice = createSlice({
           frnd.frndInfo._id === action.payload?.msg?.senderId ||
           frnd.frndInfo._id === action.payload?.msg?.receiverId
       );
-      if (index !== -1) {
-        state.friends[index].lMsg = action.payload;
-        state.friends[index].lMsg.status = action.payload.status;
-      }
+        state.friends[index].lMsg = action.payload.msg;
+        //state.friends[index].lMsg.status = action.payload.status;
     },
     seenMessageUpdate: (state, action) => {
       const index = state.friends.findIndex(
@@ -78,9 +77,7 @@ const chatSlice = createSlice({
           frnd.frndInfo._id === action.payload?.senderId ||
           frnd.frndInfo._id === action.payload?.receiverId
       );
-      if (index !== -1) {
-        state.friends[index].lMsg.status = "seen";
-      }
+      state.friends[index].lMsg.status = "seen";
     },
     deliverMessageUpdate: (state, action) => {
       const index = state.friends.findIndex(
@@ -88,18 +85,29 @@ const chatSlice = createSlice({
           frnd.frndInfo._id === action.payload?.senderId ||
           frnd.frndInfo._id === action.payload?.receiverId
       );
-      if (index !== -1) {
-        state.friends[index].lMsg.status = "delivered";
-      }
+      state.friends[index].lMsg.status = "delivered";
     },
     sentSuccessClear: (state) => {
       state.sentSuccess = false;
+    },
+    updateFriend: (state, action) => {
+      const index = state.friends.findIndex(
+        (frnd) => frnd.frndInfo._id === action.payload
+      );
+      if (state.friends[index].lMsg) {
+        state.friends[index].lMsg.status = "seen";
+      }
+    },
+    getSuccessClear: (state) => {
+      state.getSuccess = false;
     },
   },
 });
 export default chatSlice.reducer;
 
 export const {
+  getSuccessClear,
+  updateFriend,
   updateFriendMessageStatus,
   deliverMessageUpdate,
   seenMessageUpdate,
