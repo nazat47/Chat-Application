@@ -35,11 +35,9 @@ const Message = ({ messages, currentFriend, scrollRef, typing }) => {
                         <RiCheckboxCircleFill />
                       </span>
                     ) : (
-                      msg.status === "unseen" && (
-                        <span>
-                          <HiOutlineCheckCircle />
-                        </span>
-                      )
+                      <span>
+                        <HiOutlineCheckCircle />
+                      </span>
                     )}
                   </div>
                 </div>
