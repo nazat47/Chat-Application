@@ -171,7 +171,7 @@ const Register = () => {
             <div className="form_group">
               <div className="file_image">
                 <div className="image">
-                  <img src={formData.image} alt="user" />
+                  {formData.image && <img src={formData.image} alt="user" />}
                 </div>
                 <div className="file">
                   <label htmlFor="image">Select Image</label>

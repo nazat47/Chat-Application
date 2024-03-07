@@ -27,7 +27,7 @@
     .name {
       h4 {
         font-weight: 600;
-        color: white;
+        color: var(--text-color);
         margin-bottom: 8px;
       }
     }
@@ -43,11 +43,12 @@
       justify-content: space-between;
       align-items: center;
       margin: 8px 0px;
-      color: white;
+      color: var(--text-color);
       font-size: small;
       cursor: pointer;
       label {
         cursor: pointer;
+        color: var(--text-color);
       }
     }
   }

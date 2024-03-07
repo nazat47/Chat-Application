@@ -7,12 +7,12 @@
     overflow: hidden;
   }
   .hover_friend.active {
-    background-color: rgba(85, 92, 160, 0.116);
+    background-color: var(--active-color)
   }
   .hover_friend {
     cursor: pointer;
     &:hover {
-      background-color: rgba(85, 92, 160, 0.116);
+      background-color: var(--hover-color)
     }
     .friend {
       display: flex;
@@ -28,6 +28,7 @@
             height: 45px;
             border-radius: 50%;
             object-fit: cover;
+            border:1px solid var(--text-color);
           }
           .active_icon {
             position: absolute;
@@ -54,16 +55,16 @@
             font-weight: bolder;
           }
           h4 {
-            color: rgb(223, 223, 223);
+            color: var(--text-color);
             font-weight: 300;
           }
           .msg_time {
             .time_ago {
-              color: rgb(106, 181, 203);
+              color: var(--time-ago)
             }
             span {
               font-size: 12px;
-              color: rgb(198, 208, 215);
+              color: var(--text-color);
               margin-inline: 2px;
             }
           }
@@ -79,7 +80,7 @@
           }
           .unseen,
           .delivered {
-            color: rgb(226, 236, 239);
+            color: var(--text-color);
           }
           .seen_icon {
             width: 10px;

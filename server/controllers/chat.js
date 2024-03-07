@@ -13,6 +13,11 @@ const getFriends = async (req, res) => {
     let lastMsg = await getLastMessage(id, frnd._id);
     frndMsgs = [...frndMsgs, { frndInfo: frnd, lMsg: lastMsg }];
   }
+  frndMsgs.sort((a, b) => {
+    const aUpdatedAt = a.lMsg?.updatedAt;
+    const bUpdatedAt = b.lMsg?.updatedAt;
+    return new Date(bUpdatedAt) - new Date(aUpdatedAt);
+  });
   return res.status(200).json(frndMsgs);
 };
 

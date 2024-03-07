@@ -8,7 +8,7 @@ const xss = require("xss-clean");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-const cookieParser = require("cookie-parser");
+const cookieParser = require('cookie-parser');
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 const authRoute = require("./routes/auth");
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "http://localhost:3000",
-    credentials:true,
+    credentials: true,
   })
 );
 app.use(helmet());
@@ -30,6 +30,7 @@ app.use(cookieParser());
 //     max: 50,
 //   })
 // );
+
 app.use(mongoSanitize());
 
 app.get("/", (req, res) => {

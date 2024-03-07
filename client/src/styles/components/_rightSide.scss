@@ -7,7 +7,7 @@
         transition: all 0.4s ease-in-out;
         .message_send_show {
           height: 100vh;
-          border-right: 1px solid #213156bf;
+          border-right: 1px solid var(--border-color);
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -16,8 +16,9 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 10px;
-            border-bottom: 1px solid #213156bf;
+            border-bottom: 1px solid var(--border-color);
             .image_name {
+              display: flex;
               .image {
                 position: relative;
                 width: 40px;
@@ -43,7 +44,7 @@
                 align-items: center;
                 h3 {
                   padding-left: 10px;
-                  color: white;
+                  color: var(--text-color);
                 }
               }
             }
@@ -57,13 +58,14 @@
                 width: 40px;
                 margin-left: 8px;
                 border-radius: 24px;
-                color: white;
+                color: var(--icon-color);
                 cursor: pointer;
-                background-color: #0a0a1357;
+                background-color: var(--icon-bg-color);
                 label {
                   display: flex;
                   margin-bottom: 0px;
                   cursor: pointer;
+                  color: var(--icon-color);
                 }
               }
             }

@@ -8,12 +8,13 @@
     display: flex;
     padding: 8px;
     cursor: pointer;
-    color: white;
+    color: var(--text-color);
     label {
       display: flex;
       align-items: center;
       margin-bottom: 0px;
       cursor: pointer;
+      color: var(--text-color);
     }
     #pic {
       display: none;
@@ -23,10 +24,12 @@
     .add_gift {
       position: fixed;
       padding: 4px;
-      background-color: #121727;
+      background-color: #000000;
       font-size: 14px;
       bottom: 40px;
       display: none;
+      color: var(--text-white);
+      border-radius: 8px;
     }
   }
   .hover_attachment {
@@ -57,7 +60,7 @@
     display: flex;
     width: 70%;
     height: 40px;
-    background-color: #15162559;
+    background-color: var(--search-bg);
     border-radius: 50px;
     border: none;
     align-items: center;
@@ -67,7 +70,7 @@
       border-top-left-radius: 50px;
       background-color: transparent;
       border: none;
-      color: white;
+      color: var(--text-color);
       font-weight:500;
     }
     label {
@@ -78,7 +81,7 @@
   }
   .emoji_section {
     width: 250px;
-    background-color: rgb(237, 243, 248);
+    background-color: rgb(46, 47, 48);
     position: absolute;
     right: 60px;
     bottom: 50px;
@@ -89,11 +92,11 @@
     transition: all 0.3s ease-in-out;
     .emoji {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-gap: 4px;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 2px;
       span {
         cursor: pointer;
-        font-size: x-large;
+        font-size: large;
       }
     }
   }

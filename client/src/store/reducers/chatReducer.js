@@ -7,6 +7,10 @@ const initialState = {
   error: null,
   sentSuccess: false,
   getSuccess: false,
+  theme: localStorage.getItem("theme")
+    ? localStorage.getItem("theme")
+    : "light",
+  newUserAdd: "",
 };
 
 const chatSlice = createSlice({
@@ -68,8 +72,8 @@ const chatSlice = createSlice({
           frnd.frndInfo._id === action.payload?.msg?.senderId ||
           frnd.frndInfo._id === action.payload?.msg?.receiverId
       );
-        state.friends[index].lMsg = action.payload.msg;
-        //state.friends[index].lMsg.status = action.payload.status;
+      state.friends[index].lMsg = action.payload.msg;
+      //state.friends[index].lMsg.status = action.payload.status;
     },
     seenMessageUpdate: (state, action) => {
       const index = state.friends.findIndex(
@@ -87,6 +91,12 @@ const chatSlice = createSlice({
       );
       state.friends[index].lMsg.status = "delivered";
     },
+    seenAll: (state, action) => {
+      const index = state.friends.findIndex(
+        (frnd) => frnd.frndInfo._id === action.payload?.receiverId
+      );
+      state.friends[index].lMsg.status = "seen";
+    },
     sentSuccessClear: (state) => {
       state.sentSuccess = false;
     },
@@ -101,11 +111,31 @@ const chatSlice = createSlice({
     getSuccessClear: (state) => {
       state.getSuccess = false;
     },
+    setTheme: (state, action) => {
+      state.theme = action.payload;
+    },
+    logoutSuccess: (state) => {
+      state.friends = [];
+      state.messages = [];
+      state.loading = false;
+      state.error = null;
+    },
+    newUserAddSet: (state, action) => {
+      state.newUserAdd = action.payload;
+    },
+    newUserAddClear: (state) => {
+      state.newUserAdd = "";
+    },
   },
 });
 export default chatSlice.reducer;
 
 export const {
+  seenAll,
+  newUserAddClear,
+  newUserAddSet,
+  logoutSuccess,
+  setTheme,
   getSuccessClear,
   updateFriend,
   updateFriendMessageStatus,

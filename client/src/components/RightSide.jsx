@@ -17,7 +17,7 @@ const RightSide = ({
   sendEmoji,
   sendImage,
   activeUsers,
-  typing
+  typing,
 }) => {
   return (
     <div className="col-9">
@@ -73,6 +73,7 @@ const RightSide = ({
             <FriendInfo
               currentFriend={currentFriend}
               activeUsers={activeUsers}
+              messages={messages}
             />
           </div>
         </div>

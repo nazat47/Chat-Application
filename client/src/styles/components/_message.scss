@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 10px;
-    color: white;
+    color: var(--text-color);
     img {
       width: 100px;
       height: 100px;
@@ -21,7 +21,7 @@
       margin-top: 10px;
     }
     .time_ago {
-      color: rgb(170, 194, 198);
+      color: var(--time-ago);
     }
   }
   .my_message {
@@ -37,7 +37,11 @@
         height: 14px;
         border-radius: 50%;
         margin-left: 5px;
-        color: white;
+        color: var(--text-color);
+      }
+      .my {
+        background-color: var(--my-message-bg);
+        color: var(--my-message-color);
       }
       .message_text {
         text-align: end;
@@ -56,7 +60,7 @@
     .time {
       text-align: end;
       padding: 5px 0px;
-      color: rgb(98, 112, 165);
+      color: rgb(98, 105, 132);
       font-size: small;
     }
   }
@@ -67,6 +71,10 @@
       align-items: center;
       justify-content: flex-start;
       width: 500px;
+      .fd {
+        background-color: var(--fd-message-bg);
+        color: var(--text-color);
+      }
       .message_text {
         text-align: start;
         border-radius: 10px;
@@ -108,4 +116,8 @@
 }
 .typing_message {
   padding: 10px 5px;
+  .message_text {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
 }

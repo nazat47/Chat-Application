@@ -15,7 +15,7 @@ const Message = ({ messages, currentFriend, scrollRef, typing }) => {
               <div ref={scrollRef} className="my_message" key={i}>
                 <div className="image_message">
                   <div className="my_text">
-                    <p className="message_text">
+                    <p className="message_text my">
                       {msg.message?.text === "" ? (
                         <img src={msg.message?.image} alt="pic" />
                       ) : (
@@ -35,7 +35,9 @@ const Message = ({ messages, currentFriend, scrollRef, typing }) => {
                         <RiCheckboxCircleFill />
                       </span>
                     ) : (
-                      <HiOutlineCheckCircle />
+                      <span>
+                        <HiOutlineCheckCircle />
+                      </span>
                     )}
                   </div>
                 </div>
@@ -49,7 +51,7 @@ const Message = ({ messages, currentFriend, scrollRef, typing }) => {
                   <img src={currentFriend?.image} alt="" />
                   <div className="message_time">
                     <div className="fd_text">
-                      <p className="message_text">
+                      <p className="message_text fd">
                         {msg.message?.text === "" ? (
                           <img src={msg.message?.image} alt="pic" />
                         ) : (

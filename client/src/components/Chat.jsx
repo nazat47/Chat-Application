@@ -24,11 +24,16 @@ import {
   getMessagesStart,
   getMessagesSuccess,
   getSuccessClear,
+  logoutSuccess,
+  newUserAddClear,
+  newUserAddSet,
+  seenAll,
   seenMessageUpdate,
   sendMessagesFailure,
   sendMessagesStart,
   sendMessagesSuccess,
   sentSuccessClear,
+  setTheme,
   updateFriend,
   updateFriendMessage,
   updateFriendMessageStatus,
@@ -46,9 +51,8 @@ const socket = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const Chat = () => {
   const base_url = process.env.REACT_APP_BASE_URL;
-  const { friends, messages, sentSuccess, getSuccess } = useSelector(
-    (state) => state.chat
-  );
+  const { friends, messages, sentSuccess, getSuccess, theme, newUserAdd } =
+    useSelector((state) => state.chat);
   const { currentUser } = useSelector((state) => state.user);
   const [currentFriend, setCurrentFriend] = useState("");
   const [newMessage, setNewMessage] = useState("");
@@ -70,6 +74,9 @@ const Chat = () => {
       const filterUsers = users.filter((u) => u.userId !== currentUser._id);
       setActiveUsers(filterUsers);
     });
+    socket.on("newUserAdd", (data) => {
+      dispatch(newUserAddSet(data));
+    });
   }, []);
   useEffect(() => {
     socket.on("getMessage", (data) => {
@@ -85,7 +92,7 @@ const Chat = () => {
       dispatch(deliverMessageUpdate(msg));
     });
     socket.on("seenSuccess", (data) => {
-      dispatch(seenMessageUpdate(data));
+      dispatch(seenAll(data));
     });
   }, []);
   useEffect(() => {
@@ -277,6 +284,7 @@ const Chat = () => {
           dispatch(getFriendsFailure(data?.msg));
         } else {
           dispatch(getFriendsSuccess(data));
+          dispatch(newUserAddClear());
         }
       } catch (error) {
         dispatch(getFriendsFailure(error.response?.data?.msg));
@@ -284,7 +292,7 @@ const Chat = () => {
       }
     };
     getfrinds();
-  }, []);
+  }, [newUserAdd,arrivalMessage,messages]);
   useEffect(() => {
     if (friends?.length > 0) {
       setCurrentFriend(friends[0].frndInfo);
@@ -313,7 +321,7 @@ const Chat = () => {
   }, [currentFriend?._id]);
 
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages?.length > 0) {
       if (
         messages[messages.length - 1].senderId !== currentUser._id &&
         messages[messages.length - 1].status !== "seen"
@@ -367,13 +375,26 @@ const Chat = () => {
       });
       dispatch(signOutSuccess());
       socket.emit("logout", currentUser._id);
+      dispatch(logoutSuccess());
       navigate("/login");
     } catch (error) {
       console.log(error.message);
     }
   };
+  const searcFriend = (e) => {
+    const getFriends = document.getElementsByClassName("hover_friend");
+    const friendNameClass = document.getElementsByClassName("fd_name");
+    for (var i = 0; i < getFriends.length, i < friendNameClass.length; i++) {
+      let text = friendNameClass[i].innerText.toLowerCase();
+      if (text.indexOf(e.target.value.toLowerCase()) > -1) {
+        getFriends[i].style.display = "";
+      } else {
+        getFriends[i].style.display = "none";
+      }
+    }
+  };
   return (
-    <div className="chat">
+    <div className={`chat ${theme === "dark" ? "theme" : ""}`}>
       <Toaster
         position={"top-right"}
         reverseOrder={false}
@@ -411,11 +432,33 @@ const Chat = () => {
                 >
                   <h3>Dark Mode</h3>
                   <div className="on">
-                    <input value="dark" type="radio" name="theme" id="dark" />
+                    <input
+                      onChange={(e) =>
+                        dispatch(
+                          setTheme(e.target.value) ||
+                            localStorage.setItem("theme", e.target.value)
+                        )
+                      }
+                      value="dark"
+                      type="radio"
+                      name="theme"
+                      id="dark"
+                    />
                     <label htmlFor="dark">On</label>
                   </div>
                   <div className="off">
-                    <input value="light" type="radio" name="theme" id="light" />
+                    <input
+                      onChange={(e) =>
+                        dispatch(
+                          setTheme(e.target.value) ||
+                            localStorage.setItem("theme", e.target.value)
+                        )
+                      }
+                      value="light"
+                      type="radio"
+                      name="theme"
+                      id="light"
+                    />
                     <label htmlFor="light">Off</label>
                   </div>
                   <div onClick={handleLogout} className="logout">
@@ -430,6 +473,7 @@ const Chat = () => {
                   <BiSearch />
                 </button>
                 <input
+                  onChange={searcFriend}
                   type="text"
                   placeholder="Search"
                   className="form_control"
