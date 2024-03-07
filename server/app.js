@@ -17,7 +17,7 @@ const chatRoute = require("./routes/chat");
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://chat-application-gold-seven.vercel.app",
     credentials: true,
   })
 );
