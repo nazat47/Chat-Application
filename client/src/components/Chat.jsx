@@ -321,7 +321,7 @@ const Chat = () => {
       }
     };
     getMessages();
-  }, [currentFriend?._id]);
+  }, [currentFriend?._id, messages]);
 
   useEffect(() => {
     if (messages?.length > 0) {
