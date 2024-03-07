@@ -80,6 +80,7 @@ const Register = () => {
         });
       })
       .catch((error) => {
+        alert.error("Please upload image of size less then 2MB");
         console.error("Error uploading image:", error);
       });
   };
