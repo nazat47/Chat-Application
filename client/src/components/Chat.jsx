@@ -47,7 +47,7 @@ import sendingSound from "../audio/Milestone.mp3";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { signOutSuccess } from "../store/reducers/userReducer";
 
-const ENDPOINT = "http://localhost:4001/";
+const ENDPOINT = "https://chat-app-socket-xj9h.onrender.com/";
 const socket = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const Chat = () => {
@@ -211,16 +211,7 @@ const Chat = () => {
       promise
         .then(async (url) => {
           console.log("Image uploaded successfully");
-          socket.emit("sendMessage", {
-            senderId: currentUser._id,
-            senderName: currentUser.username,
-            receiverId: currentFriend._id,
-            time: new Date(),
-            message: {
-              text: "",
-              image: url,
-            },
-          });
+
           const messageData = {
             senderId: currentUser?._id,
             senderName: currentUser?.username,
@@ -239,6 +230,16 @@ const Chat = () => {
               dispatch(sendMessagesFailure(data?.msg));
             } else {
               dispatch(sendMessagesSuccess(data));
+              socket.emit("sendMessage", {
+                senderId: currentUser._id,
+                senderName: currentUser.username,
+                receiverId: currentFriend._id,
+                time: new Date(),
+                message: {
+                  text: "",
+                  image: url,
+                },
+              });
             }
           } catch (error) {
             dispatch(sendMessagesFailure(error.response.data?.msg));
@@ -269,7 +270,6 @@ const Chat = () => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log(downloadURL);
             resolve(downloadURL);
           });
         }
