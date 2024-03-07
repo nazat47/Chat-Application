@@ -348,7 +348,7 @@ const Chat = () => {
               }
             );
           } catch (error) {
-            console.log(error.response.data?.msg);
+            console.log(error.message);
           }
         };
         seenMessage();
