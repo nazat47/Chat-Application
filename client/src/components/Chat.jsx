@@ -8,6 +8,7 @@ import axios from "axios";
 import socketIO from "socket.io-client";
 import toast, { Toaster } from "react-hot-toast";
 import { app } from "../firebase";
+import { useAlert } from "react-alert";
 import useSound from "use-sound";
 import {
   getDownloadURL,
@@ -64,6 +65,7 @@ const Chat = () => {
   const [sendSound] = useSound(sendingSound);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const alert = useAlert();
   const scrollRef = useRef();
   const toggleRef = useRef();
   useEffect(() => {
@@ -244,6 +246,7 @@ const Chat = () => {
           }
         })
         .catch((error) => {
+          alert.error("Please upload image of size less then 2MB");
           console.error("Error uploading image:", error);
         });
     }
@@ -292,7 +295,7 @@ const Chat = () => {
       }
     };
     getfrinds();
-  }, [newUserAdd,arrivalMessage,messages]);
+  }, [newUserAdd, arrivalMessage, messages]);
   useEffect(() => {
     if (friends?.length > 0) {
       setCurrentFriend(friends[0].frndInfo);
