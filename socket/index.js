@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
     io.emit("getUsers", users);
     const us = users.filter((u) => u.userId !== userId);
     const con = "newUserAdd";
-    for (var i=0;i<us.length;i++) {
+    for (var i = 0; i < us.length; i++) {
       socket.to(us[i].socketId).emit("newUserAdd", con);
     }
   });

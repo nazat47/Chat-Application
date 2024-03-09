@@ -1,9 +1,11 @@
 .card {
   width: 375px;
   padding: 15px 20px;
-  background-color: rgb(58, 144, 109);
-  box-shadow: 0px 8px 25px #454545;
+  background: rgba(255, 255, 255, 0.11) !important; /* Adjust opacity as needed */
+  backdrop-filter: blur(40px) !important;
+  //box-shadow: 0px 8px 25px #454545;
   border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.274);
 }
 .form_group {
   margin: 10px 0px;

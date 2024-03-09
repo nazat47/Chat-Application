@@ -8,7 +8,7 @@ const xss = require("xss-clean");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 const authRoute = require("./routes/auth");
@@ -17,7 +17,10 @@ const chatRoute = require("./routes/chat");
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://chat-application-gold-seven.vercel.app",
+    origin: [
+      "https://chat-application-gold-seven.vercel.app",
+      "https://localhost:3000",
+    ],
     credentials: true,
   })
 );
