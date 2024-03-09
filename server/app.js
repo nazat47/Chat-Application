@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "https://chat-application-gold-seven.vercel.app",
-      "https://localhost:3000",
+      "http://localhost:3000",
     ],
     credentials: true,
   })
